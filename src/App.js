@@ -1,25 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Navbar from "./components/Navbar";
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Login from "./components/Login";
+import { connect } from "react-redux";
+import { Switch, Route, withRouter } from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  componentDidMount() {
+    this.props.history.push("/login");
+    console.log(this.props);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.loggedIn !== prevProps.loggedIn) {
+      this.props.history.push("/");
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        {!this.props.loggedIn ? (
+          <Switch>
+            <Route path="/login" exact component={Login} />
+          </Switch>
+        ) : (
+          <Navbar />
+        )}
+      </div>
+    );
+  }
 }
 
-export default App;
+const mapStatetoProps = (state) => {
+  return {
+    loggedIn: state.isLogin,
+  };
+};
+
+export default withRouter(connect(mapStatetoProps)(App));
